@@ -68,13 +68,17 @@ public class SimpleLanguageManager {
      * Get a translated message for the default language
      */
     public String getMessage(String key, Object... args) {
-        return getMessage(defaultLanguage, key, args);
+        return getMessageForLanguage(defaultLanguage, key, args);
     }
     
     /**
-     * Get a translated message for a specific language
+     * Get a translated message for a specific language.
+     * Named differently from {@link #getMessage(String, Object...)} on purpose:
+     * with two overloads, a call like {@code getMessage("key", someString)}
+     * would resolve to this (langCode, key) form instead of (key, args) and
+     * print "[MISSING KEY: <the argument>]".
      */
-    public String getMessage(String langCode, String key, Object... args) {
+    public String getMessageForLanguage(String langCode, String key, Object... args) {
         JsonObject langData = languages.get(langCode);
         
         // Fallback to default language if requested language not found

@@ -19,7 +19,8 @@ public class StartCommand extends CommandBase {
         }
 
         chunkyManager.start();
-        sendMessage(sender, plugin.getLanguageManager().getMessage("chunk.started"));
+        sendMessage(sender, plugin.getLanguageManager().getMessage("chunk.started",
+                configManager.getCenterX(), configManager.getCenterZ(), configManager.getRadius()));
         sendInfoBroadcast(plugin.getLanguageManager().getMessage("chunk.started_broadcast"));
         return true;
     }

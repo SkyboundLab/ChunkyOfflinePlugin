@@ -1,9 +1,9 @@
 name: ChunkyOffline
-version: 1.0.0
+version: 1.1.5
 description: Offline chunk generation extension for Chunky (Paper + Folia compatible)
 author: xoola
 main: at.xoola.chunkyoffline.ChunkyOfflinePlugin
-api-version: 1.21
+api-version: 26.3
 
 folia-supported: true
 

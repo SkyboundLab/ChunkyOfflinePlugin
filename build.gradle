@@ -22,11 +22,11 @@ repositories {
 }
 
 dependencies {
-    // Paper API 1.21.11 with Folia and Purpur compatibility
-    compileOnly 'io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT'
+    // Paper API 26.3 with Folia and Purpur compatibility
+    compileOnly 'io.papermc.paper:paper-api:26.3.build.244-stable'
 
     // Chunky API
-    compileOnly 'org.popcraft:chunky-common:1.4.40'
+    compileOnly 'org.popcraft:chunky-common:1.5.66'
     
     // Gson for JSON language files
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -36,7 +36,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks.withType(JavaCompile) {

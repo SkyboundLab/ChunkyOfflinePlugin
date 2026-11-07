@@ -28,7 +28,7 @@ public class ChunkyManager {
             if (chunkyPlugin == null) {
                 plugin.getLogger().severe(plugin.getLanguageManager().getMessage("error.chunky_not_found"));
             } else {
-                plugin.getLogger().info(plugin.getLanguageManager().getMessage("error.chunky_found", chunkyPlugin.getDescription().getVersion()));
+                plugin.getLogger().info(plugin.getLanguageManager().getMessage("error.chunky_found", chunkyPlugin.getPluginMeta().getVersion()));
             }
         } catch (Exception e) {
             plugin.getLogger().severe(plugin.getLanguageManager().getMessage("error.chunky_init_failed", e.getMessage()));
@@ -91,6 +91,11 @@ public class ChunkyManager {
         Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky pause");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky cancel");
+            // Chunky 1.5+ asks for confirmation before cancelling, and a
+            // cancelled task stays persisted (tasks.log) until confirmed,
+            // which would make the start below refuse with "A task was
+            // already started for this world". Confirm it so the slate is clean.
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky confirm");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky world " + world);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky center " + x + " " + z);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky radius " + radius);
@@ -123,14 +128,18 @@ public class ChunkyManager {
         }
 
         isGenerating.set(true); // Mark as generating immediately
-        
+
         // Use "chunky continue" instead of "chunky start" to resume existing task
         // This matches the original datapack logic
-        Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
+        // Delayed 1s: a pause issued just before this resume (same tick, e.g.
+        // player joins then leaves immediately) has not applied yet when the
+        // continue runs, and Chunky answers "No tasks to continue" while the
+        // task then stays paused. 20 ticks is invisible in real use.
+        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky continue");
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.resumed"));
             plugin.getLogger().info(plugin.getLanguageManager().getMessage("chunk.resumed"));
-        });
+        }, 20L);
     }
 
     public void cancel() {
@@ -145,6 +154,9 @@ public class ChunkyManager {
         Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky pause");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky cancel");
+            // Chunky 1.5+ only cancels after confirmation; without this the
+            // task stays paused and persisted, blocking the next start.
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky confirm");
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.cancelled"));
             plugin.getLogger().info(plugin.getLanguageManager().getMessage("chunk.cancelled"));
         });
