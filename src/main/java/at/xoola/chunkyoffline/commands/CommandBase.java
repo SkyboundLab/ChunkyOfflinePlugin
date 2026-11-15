@@ -45,14 +45,13 @@ public abstract class CommandBase implements CommandExecutor {
     protected void sendError(CommandSender sender, String message) {
         sender.sendMessage(plugin.getLanguageManager().getMessage("prefix") + " §c" + message);
     }
-    
+
     protected void sendInfoBroadcast(String message) {
         plugin.getServer().getOnlinePlayers().forEach(player -> {
             if (player.hasPermission("chunkyoffline.admin.info")) {
                 player.sendMessage(plugin.getLanguageManager().getMessage("prefix") + " §f" + message);
             }
         });
-        // Also send to console
         plugin.getLogger().info(message);
     }
 }

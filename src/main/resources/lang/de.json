@@ -4,7 +4,7 @@
   "plugin.ready": "Plugin geladen und bereit!",
   "plugin.ready.use": "Verwende /chunkyoffline start um den automatischen Modus zu starten",
   "plugin.startup_detection": "Verwende Fallback-Server-Startup-Erkennung",
-  
+
   "monitor.started": "ChunkyOffline Spieler-Monitor gestartet (jede Sekunde)",
   "monitor.stopped": "ChunkyOffline Monitor-Task gestoppt",
   "monitor.interrupted": "ChunkyOffline Monitor gestoppt",
@@ -12,7 +12,7 @@
   "monitor.resume_periodic": "Setze Chunk-Generierung fort (periodische Aufgabe)...",
   "monitor.auto_starting": "Auto-Start der Chunk-Generierung - Server ist leer",
   "monitor.error_periodic": "Fehler in periodischer Aufgabe: {0}",
-  
+
   "chunk.started": "Chunk-Generierung gestartet bei ({0}, {1}) mit Radius {2}",
   "chunk.paused": "Chunk-Generierung pausiert.",
   "chunk.resumed": "Chunk-Generierung fortgesetzt.",
@@ -24,7 +24,7 @@
   "chunk.paused_broadcast": "Chunk-Generierung wurde pausiert.",
   "chunk.resumed_broadcast": "Chunk-Generierung wurde fortgesetzt.",
   "chunk.cancelled_broadcast": "Chunk-Generierung wurde abgebrochen.",
-  
+
   "command.no_permission": "Du hast keine Berechtigung, diesen Befehl zu verwenden!",
   "command.only_players": "Dieser Befehl kann nur von Spielern verwendet werden!",
   "command.unknown": "Unbekannter Unterbefehl: {0}",
@@ -34,7 +34,7 @@
   "command.help.resume": "/chunkyoffline resume - Chunk-Generierung fortsetzen",
   "command.help.cancel": "/chunkyoffline cancel - Chunk-Generierung abbrechen",
   "command.help.config": "/chunkyoffline config <radius|center> <wert> - Einstellungen ändern",
-  
+
   "config.radius.set": "Chunk-Generierung Radius auf {0} gesetzt",
   "config.center.set": "Chunk-Generierung Zentrum auf ({0}, {1}) gesetzt",
   "config.radius.invalid": "Ungültiger Radius! Muss eine positive Zahl sein.",
@@ -54,15 +54,15 @@
   "config.center_z.set": "Zentrum Z auf {0} gesetzt",
   "config.center_x.current": "Zentrum X: {0}",
   "config.center_z.current": "Zentrum Z: {0}",
-  
+
   "player.joined": "Spieler {0} beigetreten - pausiere Chunk-Generierung",
   "player.left": "Spieler {0} hat verlassen - Monitor prüft ob Chunk-Generierung fortgesetzt werden soll",
   "player.last_left": "Letzter Spieler hat verlassen - setze Chunk-Generierung fort",
-  
+
   "status.auto_enabled": "Auto-Modus aktiviert - Chunks werden generiert wenn Server leer ist",
   "status.auto_disabled": "Auto-Modus deaktiviert. Verwende /chunkyoffline start zum Aktivieren",
   "status.will_pause": "Chunk-Generierung wird pausiert da Spieler online sind",
-  
+
   "error.chunky_not_available": "Chunky Plugin ist nicht verfügbar!",
   "error.chunky_not_found": "Chunky Plugin nicht gefunden! Stelle sicher, dass Chunky installiert ist.",
   "error.chunky_found": "Chunky Plugin gefunden: {0}",
@@ -71,12 +71,12 @@
   "error.datapack_check": "Fehler bei Datapack-Style Prüfung: {0}",
   "error.config_save": "Fehler beim Speichern der Konfiguration: {0}",
   "error.config_load": "Fehler beim Laden der Konfiguration: {0}",
-  
+
   "language.not_found": "Sprache '{0}' nicht gefunden, verwende Deutsch als Standard",
   "language.using": "Verwende Sprache: {0}",
   "language.loaded": "Geladen: {0} Sprache(n): {1}",
   "language.load_error": "Konnte eingebaute Sprache '{0}' nicht laden: {1}",
   "language.format_error": "Fehler beim Formatieren der Nachricht '{0}': {1}",
-  
+
   "prefix": "§7[§cChunky Offline§7]"
 }

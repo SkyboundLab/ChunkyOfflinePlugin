@@ -14,24 +14,23 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class SimpleLanguageManager {
-    
+
     private final JavaPlugin plugin;
     private final Gson gson;
     private final Map<String, JsonObject> languages;
     private String defaultLanguage;
-    
+
     public SimpleLanguageManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.gson = new Gson();
         this.languages = new HashMap<>();
-        this.defaultLanguage = "de"; // Default to German
-        
+        this.defaultLanguage = "en";
+
         loadLanguages();
         loadConfig();
     }
-    
+
     private void loadConfig() {
-        // Load language setting from config.yml
         String configLang = plugin.getConfig().getString("language", "de");
         if (languages.containsKey(configLang)) {
             this.defaultLanguage = configLang;
@@ -41,19 +40,18 @@ public class SimpleLanguageManager {
         }
         plugin.getLogger().info(getMessage("language.using", this.defaultLanguage));
     }
-    
+
     private void loadLanguages() {
-        // Load built-in languages from resources
         loadLanguageFromResource("en");
         loadLanguageFromResource("de");
-        
+
         plugin.getLogger().info(getMessage("language.loaded", languages.size(), String.join(", ", languages.keySet())));
     }
-    
+
     private void loadLanguageFromResource(String langCode) {
         try {
             InputStreamReader reader = new InputStreamReader(
-                plugin.getResource("lang/" + langCode + ".json"), 
+                plugin.getResource("lang/" + langCode + ".json"),
                 StandardCharsets.UTF_8
             );
             JsonObject langData = gson.fromJson(reader, JsonObject.class);
@@ -63,43 +61,23 @@ public class SimpleLanguageManager {
             plugin.getLogger().warning(getMessage("language.load_error", langCode, e.getMessage()));
         }
     }
-    
-    /**
-     * Get a translated message for the default language
-     */
+
     public String getMessage(String key, Object... args) {
         return getMessageForLanguage(defaultLanguage, key, args);
     }
-    
-    /**
-     * Get a translated message for a specific language.
-     * Named differently from {@link #getMessage(String, Object...)} on purpose:
-     * with two overloads, a call like {@code getMessage("key", someString)}
-     * would resolve to this (langCode, key) form instead of (key, args) and
-     * print "[MISSING KEY: <the argument>]".
-     */
+
     public String getMessageForLanguage(String langCode, String key, Object... args) {
         JsonObject langData = languages.get(langCode);
-        
-        // Fallback to default language if requested language not found
         if (langData == null && !langCode.equals(defaultLanguage)) {
             langData = languages.get(defaultLanguage);
         }
-        
-        // Fallback to English if default language not found
         if (langData == null && !defaultLanguage.equals("en")) {
             langData = languages.get("en");
         }
-        
-        // Last resort: return key if nothing found
         if (langData == null) {
             return "[MISSING LANG: " + key + "]";
         }
-        
-        // Get the translated text
         String message = langData.has(key) ? langData.get(key).getAsString() : "[MISSING KEY: " + key + "]";
-        
-        // Apply formatting if arguments provided
         if (args.length > 0) {
             try {
                 message = MessageFormat.format(message, args);
@@ -107,31 +85,22 @@ public class SimpleLanguageManager {
                 plugin.getLogger().warning(getMessage("language.format_error", key, e.getMessage()));
             }
         }
-        
+
         return message;
     }
-    
-    /**
-     * Send a translated message to a command sender
-     */
+
     public void sendMessage(CommandSender sender, String key, Object... args) {
         String message = getMessage(key, args);
         String prefix = getMessage("prefix");
         sender.sendMessage(prefix + " §f" + message);
     }
-    
-    /**
-     * Send a translated message to a player
-     */
+
     public void sendPlayerMessage(Player player, String key, Object... args) {
         String message = getMessage(key, args);
         String prefix = getMessage("prefix");
         player.sendMessage(prefix + " §f" + message);
     }
-    
-    /**
-     * Get default language code
-     */
+
     public String getDefaultLanguage() {
         return defaultLanguage;
     }

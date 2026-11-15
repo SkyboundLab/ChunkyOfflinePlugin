@@ -24,21 +24,15 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
-        // For Paper 1.21.11, use getType() instead of getLoadType()
         try {
             if (event.getType() != ServerLoadEvent.LoadType.STARTUP) {
                 return;
             }
         } catch (NoSuchMethodError e) {
-            // Fallback for older Paper versions - just proceed
             plugin.getLogger().info(plugin.getLanguageManager().getMessage("plugin.startup_detection"));
         }
-
-        // Server loaded - ChunkyOffline is ready!
         plugin.getLogger().info(plugin.getLanguageManager().getMessage("plugin.ready"));
         plugin.getLogger().info(plugin.getLanguageManager().getMessage("plugin.ready.use"));
-        
-        // Send info to online players with permission
         plugin.getServer().getOnlinePlayers().forEach(player -> {
             if (player.hasPermission("chunkyoffline.admin.info")) {
                 plugin.getLanguageManager().sendPlayerMessage(player, "plugin.ready");
@@ -49,12 +43,10 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // Provide admin info to joining players with permission
         if (event.getPlayer().hasPermission("chunkyoffline.admin.info")) {
-            // Inform about current status
             boolean autoMode = chunkyManager.isAutoModeEnabled();
             boolean generating = chunkyManager.isGenerating();
-            
+
             if (autoMode) {
                 if (generating) {
                     plugin.getLanguageManager().sendPlayerMessage(event.getPlayer(), "status.will_pause");
@@ -67,10 +59,8 @@ public class ServerListener implements Listener {
         }
     }
 
-    @EventHandler  
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // Players leaving will be handled by the main monitor loop
-        // Just log for debugging purposes
         if (chunkyManager.isAutoModeEnabled()) {
             plugin.getLogger().info(plugin.getLanguageManager().getMessage("player.left", event.getPlayer().getName()));
         }

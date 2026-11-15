@@ -42,12 +42,10 @@ public class ChunkyManager {
         }
 
         if (isGenerating.compareAndSet(false, true)) {
-            autoModeEnabled.set(true); // Enable auto mode when starting
+            autoModeEnabled.set(true);
             int radius = configManager.getRadius();
             int x = configManager.getCenterX();
             int z = configManager.getCenterZ();
-
-            // Execute commands with proper thread handling
             executeChunkyCommandsDirectly(x, z, radius);
         } else {
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.already_running"));
@@ -55,7 +53,6 @@ public class ChunkyManager {
     }
 
     public void startInternal() {
-        // Internal start method for periodic task - assumes configuration is already set
         if (chunkyPlugin == null || !chunkyPlugin.isEnabled()) {
             plugin.getLogger().fine(plugin.getLanguageManager().getMessage("error.chunky_periodic_unavailable"));
             return;
@@ -63,16 +60,10 @@ public class ChunkyManager {
 
         if (isGenerating.compareAndSet(false, true)) {
             try {
-                // Simple approach - just resume chunky (assumes it's already configured)
                 plugin.getLogger().info(plugin.getLanguageManager().getMessage("monitor.resume_periodic"));
-                
-                // Use a simple approach that shouldn't cause threading issues
                 plugin.getLogger().info(plugin.getLanguageManager().getMessage("monitor.auto_starting"));
-                // We'll just set the flag and let the user manually start it once
-                // The periodic task will only resume existing generation
-                
-                isGenerating.set(false); // Reset for now - this is just a status check
-                
+
+                isGenerating.set(false);
             } catch (Exception e) {
                 plugin.getLogger().warning(plugin.getLanguageManager().getMessage("monitor.error_periodic", e.getMessage()));
                 isGenerating.set(false);
@@ -81,26 +72,18 @@ public class ChunkyManager {
     }
 
     private void executeChunkyCommandsDirectly(int x, int z, int radius) {
-        String world = "world"; // Default world, could be configurable
-        
-        // Set flags immediately before async execution
-        isGenerating.set(true); // Mark as generating
-        autoModeEnabled.set(true); // Enable auto mode
-        
-        // Execute commands in the global region for Folia compatibility
+        String world = "world";
+        isGenerating.set(true);
+        autoModeEnabled.set(true);
         Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky pause");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky cancel");
-            // Chunky 1.5+ asks for confirmation before cancelling, and a
-            // cancelled task stays persisted (tasks.log) until confirmed,
-            // which would make the start below refuse with "A task was
-            // already started for this world". Confirm it so the slate is clean.
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky confirm");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky world " + world);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky center " + x + " " + z);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky radius " + radius);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky start");
-            
+
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.started", x, z, radius));
             plugin.getLogger().info(plugin.getLanguageManager().getMessage("chunk.started", x, z, radius));
         });
@@ -112,8 +95,8 @@ public class ChunkyManager {
             return;
         }
 
-        isGenerating.set(false); // Mark as paused immediately
-        
+        isGenerating.set(false);
+
         Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky pause");
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.paused"));
@@ -127,14 +110,7 @@ public class ChunkyManager {
             return;
         }
 
-        isGenerating.set(true); // Mark as generating immediately
-
-        // Use "chunky continue" instead of "chunky start" to resume existing task
-        // This matches the original datapack logic
-        // Delayed 1s: a pause issued just before this resume (same tick, e.g.
-        // player joins then leaves immediately) has not applied yet when the
-        // continue runs, and Chunky answers "No tasks to continue" while the
-        // task then stays paused. 20 ticks is invisible in real use.
+        isGenerating.set(true);
         Bukkit.getGlobalRegionScheduler().runDelayed(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky continue");
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.resumed"));
@@ -149,13 +125,11 @@ public class ChunkyManager {
         }
 
         isGenerating.set(false);
-        autoModeEnabled.set(false); // Disable auto mode when canceled
-        
+        autoModeEnabled.set(false);
+
         Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky pause");
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky cancel");
-            // Chunky 1.5+ only cancels after confirmation; without this the
-            // task stays paused and persisted, blocking the next start.
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "chunky confirm");
             broadcastMessage(plugin.getLanguageManager().getMessage("chunk.cancelled"));
             plugin.getLogger().info(plugin.getLanguageManager().getMessage("chunk.cancelled"));
@@ -171,14 +145,12 @@ public class ChunkyManager {
     }
 
     private void broadcastMessage(String message) {
-        // Send to all players with admin.info permission
         String prefix = plugin.getLanguageManager().getMessage("prefix");
         plugin.getServer().getOnlinePlayers().forEach(player -> {
             if (player.hasPermission("chunkyoffline.admin.info")) {
                 player.sendMessage(prefix + " §f" + message);
             }
         });
-        // Also log to console
         plugin.getLogger().info(message);
     }
 
@@ -194,4 +166,3 @@ public class ChunkyManager {
         return chunkyPlugin;
     }
 }
-

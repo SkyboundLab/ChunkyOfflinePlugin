@@ -9,7 +9,7 @@ language: de
 chunk-generation:
   # Radius for chunk generation (in blocks)
   radius: 10000
-  
+
   # Center coordinates for chunk generation
   center:
     x: 0

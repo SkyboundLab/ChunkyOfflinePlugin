@@ -20,7 +20,7 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
     private final ChunkyOfflinePlugin plugin;
     private final ConfigManager configManager;
     private final ChunkyManager chunkyManager;
-    
+
     private final StartCommand startCommand;
     private final PauseCommand pauseCommand;
     private final ResumeCommand resumeCommand;
@@ -31,8 +31,6 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
         this.configManager = configManager;
         this.chunkyManager = chunkyManager;
-        
-        // Initialize subcommands
         this.startCommand = new StartCommand(plugin, configManager, chunkyManager);
         this.pauseCommand = new PauseCommand(plugin, configManager, chunkyManager);
         this.resumeCommand = new ResumeCommand(plugin, configManager, chunkyManager);
@@ -48,7 +46,7 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
         }
 
         String subCommand = args[0].toLowerCase();
-        
+
         switch (subCommand) {
             case "start":
                 if (!sender.hasPermission("chunkyoffline.admin.start")) {
@@ -56,35 +54,35 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 return startCommand.executeCommand(sender, args);
-                
+
             case "pause":
                 if (!sender.hasPermission("chunkyoffline.admin.pause")) {
                     sendError(sender, plugin.getLanguageManager().getMessage("command.no_permission"));
                     return true;
                 }
                 return pauseCommand.executeCommand(sender, args);
-                
+
             case "resume":
                 if (!sender.hasPermission("chunkyoffline.admin.resume")) {
                     sendError(sender, plugin.getLanguageManager().getMessage("command.no_permission"));
                     return true;
                 }
                 return resumeCommand.executeCommand(sender, args);
-                
+
             case "cancel":
                 if (!sender.hasPermission("chunkyoffline.admin.cancel")) {
                     sendError(sender, plugin.getLanguageManager().getMessage("command.no_permission"));
                     return true;
                 }
                 return cancelCommand.executeCommand(sender, args);
-                
+
             case "config":
                 if (!sender.hasPermission("chunkyoffline.admin.config")) {
                     sendError(sender, plugin.getLanguageManager().getMessage("command.no_permission"));
                     return true;
                 }
                 return configCommand.executeCommand(sender, args);
-                
+
             default:
                 sendError(sender, plugin.getLanguageManager().getMessage("command.unknown", subCommand));
                 sendHelp(sender);
@@ -95,19 +93,17 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
-        
+
         if (args.length == 1) {
             List<String> subCommands = Arrays.asList("start", "pause", "resume", "cancel", "config");
             for (String subCommand : subCommands) {
                 if (subCommand.startsWith(args[0].toLowerCase())) {
-                    // Check permissions
                     if (sender.hasPermission("chunkyoffline.admin." + subCommand)) {
                         completions.add(subCommand);
                     }
                 }
             }
         } else if (args.length > 1 && args[0].equalsIgnoreCase("config")) {
-            // Handle config tab completion
             if (args.length == 2) {
                 if ("set".startsWith(args[1].toLowerCase())) completions.add("set");
                 if ("get".startsWith(args[1].toLowerCase())) completions.add("get");
@@ -120,16 +116,16 @@ public class MainCommandExecutor implements CommandExecutor, TabCompleter {
                 }
             }
         }
-        
+
         return completions;
     }
-    
+
     private void sendHelp(CommandSender sender) {
         if (!sender.hasPermission("chunkyoffline.admin.info")) {
             sendError(sender, plugin.getLanguageManager().getMessage("command.no_permission"));
             return;
         }
-        
+
         sendMessage(sender, plugin.getLanguageManager().getMessage("command.help.header"));
         if (sender.hasPermission("chunkyoffline.admin.start")) {
             sendMessage(sender, plugin.getLanguageManager().getMessage("command.help.start"));
